@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rent Price Estimation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Heebo', sans-serif;
+	background-image: url("{{ url_for('static', filename='c56eee28-6fdd-443a-b0af-b6bafdd730e4.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+
+      .overlay {
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+        padding: 40px;
+        max-width: 700px;
+        margin: 50px auto;
+      }
+
+      h1 {
+        color: #4B0082;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        color: #D8BFD8;
+        text-align: center;
+        margin-top: 0;
+      }
+
+      h3 {
+        color: #4B0082;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      input, select {
+        padding: 8px;
+        font-size: 15px;
+        margin-top: 4px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4B0082;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #370062;
+      }
+
+      .error {
+        color: red;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <h1>Rent Price Estimation</h1>
+      <h2>Enter the apartment data:</h2>
+
+      <form id="apartment-form" action="{{ url_for('predict') }}" method="post">
+
+        <label for="property_type">Property Type:</label>
+        <select id="property_type" name="property_type">
+          <option value="דירה">דירה</option>
+          <option value="דירת גן">דירת גן</option>
+          <option value="דופלקס">דופלקס</option>
+          <option value="גג/פנטהאוז">גג/פנטהאוז</option>
+          <option value="סטודיו/לופט">סטודיו/לופט</option>
+          <option value="דו משפחתי">דו משפחתי</option>
+          <option value="החלפת דירות">החלפת דירות</option>
+          <option value="יחידת דיור">יחידת דיור</option>
+          <option value="פרטי/קוטג'">פרטי/קוטג'</option>
+        </select>
+
+     <label for="neighborhood">Neighborhood:</label>
+     <select id="neighborhood" name="neighborhood">
+        <option value="אזורי חן">אזורי חן</option>
+        <option value="אפקה">אפקה</option>
+        <option value="בית שטראוס">בית שטראוס</option>
+        <option value="בצרון">בצרון</option>
+        <option value="גבעת הרצל">גבעת הרצל</option>
+        <option value="גני צהלה">גני צהלה</option>
+        <option value="דקר">דקר</option>
+        <option value="הגוש הגדול">הגוש הגדול</option>
+        <option value="הדר יוסף">הדר יוסף</option>
+        <option value="המשתלה">המשתלה</option>
+        <option value="הקריה">הקריה</option>
+        <option value="הצפון החדש החלק הדרומי">הצפון החדש החלק הדרומי</option>
+        <option value="הצפון החדש החלק הצפוני">הצפון החדש החלק הצפוני</option>
+        <option value="הצפון החדש סביבת ככר המדינה">הצפון החדש סביבת ככר המדינה</option>
+        <option value="הצפון הישן החלק המרכזי">הצפון הישן החלק המרכזי</option>
+        <option value="הצפון הישן החלק הצפוני">הצפון הישן החלק הצפוני</option>
+        <option value="הצפון הישן החלק הדרום מערבי">הצפון הישן החלק הדרום מערבי</option>
+        <option value="הצפון הישן החלק הדרום מזרחי">הצפון הישן החלק הדרום מזרחי</option>
+        <option value="התקווה">התקווה</option>
+        <option value="חוף הצוק">חוף הצוק</option>
+        <option value="יד אליהו">יד אליהו</option>
+        <option value="יפו ג">יפו ג</option>
+        <option value="יפו ד">יפו ד</option>
+        <option value="כוכב הצפון">כוכב הצפון</option>
+        <option value="כפיר">כפיר</option>
+        <option value="לב תל אביב החלק הדרומי">לב תל אביב החלק הדרומי</option>
+        <option value="לב תל אביב החלק הצפוני">לב תל אביב החלק הצפוני</option>
+        <option value="לבנה">לבנה</option>
+        <option value="לינקולן">לינקולן</option>
+        <option value="מע&quot;ר צפוני">מע&quot;ר צפוני</option>
+        <option value="מונטיפיורי">מונטיפיורי</option>
+        <option value="מרכז יפו מזרחית לשדרות ירושלים">מרכז יפו מזרחית לשדרות ירושלים</option>
+        <option value="נאות אפקה א">נאות אפקה א</option>
+        <option value="נאות אפקה ב">נאות אפקה ב</option>
+        <option value="נחלת יצחק">נחלת יצחק</option>
+        <option value="נוה אביבים">נוה אביבים</option>
+        <option value="נוה אליעזר">נוה אליעזר</option>
+        <option value="נוה ברבור">נוה ברבור</option>
+        <option value="נוה חן">נוה חן</option>
+        <option value="נוה שרת">נוה שרת</option>
+        <option value="נוה שאנן">נוה שאנן</option>
+        <option value="עג'מי">עג'מי</option>
+        <option value="עזרא">עזרא</option>
+        <option value="פארק צמרת">פארק צמרת</option>
+        <option value="פלורנטין">פלורנטין</option>
+        <option value="צהלון">צהלון</option>
+        <option value="צפון יפו">צפון יפו</option>
+        <option value="קרית שלום">קרית שלום</option>
+        <option value="רביבים">רביבים</option>
+        <option value="רמת אביב">רמת אביב</option>
+        <option value="רמת אביב ג">רמת אביב ג</option>
+        <option value="רמת אביב החדשה">רמת אביב החדשה</option>
+        <option value="שבזי">שבזי</option>
+        <option value="שיכון בבלי">שיכון בבלי</option>
+        <option value="שיכוני חסכון">שיכוני חסכון</option>
+        <option value="שפירא">שפירא</option>
+        <option value="תל חיים">תל חיים</option>
+        <option value="תל כביר">תל כביר</option>
+    </select>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address">
+
+        <label for="room_num">Number of Rooms:</label>
+        <input type="number" step="0.1" id="room_num" name="room_num">
+
+        <label for="floor">Floor:</label>
+        <input type="number" id="floor" name="floor">
+
+        <label for="area">Area (m²):</label>
+        <input type="number" id="area" name="area">
+
+        <label for="garden_area">Garden Area (m²):</label>
+        <input type="number" id="garden_area" name="garden_area">
+
+        <label for="num_of_payments">Number of Payments:</label>
+        <input type="number" id="num_of_payments" name="num_of_payments">
+
+        <label for="monthly_arnona">Monthly Arnona:</label>
+        <input type="number" step="0.01" id="monthly_arnona" name="monthly_arnona">
+
+        <label for="building_tax">Building Tax:</label>
+        <input type="number" step="0.01" id="building_tax" name="building_tax">
+
+        <label for="total_floors">Total Floors in Building:</label>
+        <input type="number" id="total_floors" name="total_floors">
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+
+        <label for="has_parking">Has Parking (0 or 1):</label>
+        <input type="number" min="0" max="1" id="has_parking" name="has_parking">
+
+        <label for="has_storage">Has Storage (0 or 1):</label>
+        <input type="number" min="0" max="1" id="has_storage" name="has_storage">
+
+        <label for="elevator">Elevator (0 or 1):</label>
+        <input type="number" min="0" max="1" id="elevator" name="elevator">
+
+        <label for="ac">Air Conditioning (0 or 1):</label>
+        <input type="number" min="0" max="1" id="ac" name="ac">
+
+        <label for="handicap">Handicap Accessible (0 or 1):</label>
+        <input type="number" min="0" max="1" id="handicap" name="handicap">
+
+        <label for="has_bars">Has Bars (0 or 1):</label>
+        <input type="number" min="0" max="1" id="has_bars" name="has_bars">
+
+        <label for="has_safe_room">Has Safe Room (0 or 1):</label>
+        <input type="number" min="0" max="1" id="has_safe_room" name="has_safe_room">
+
+        <label for="has_balcony">Has Balcony (0 or 1):</label>
+        <input type="number" min="0" max="1" id="has_balcony" name="has_balcony">
+
+        <label for="is_furnished">Is Furnished (0 or 1):</label>
+        <input type="number" min="0" max="1" id="is_furnished" name="is_furnished">
+
+        <label for="is_renovated">Is Renovated (0 or 1):</label>
+        <input type="number" min="0" max="1" id="is_renovated" name="is_renovated">
+
+        <label for="distance_from_center">Distance from City Center (meters):</label>
+        <input type="number" step="0.01" id="distance_from_center" name="distance_from_center">
+
+        <button type="submit">Predict Price</button>
+      </form>
+
+      {% if prediction %}
+        <h3>המחיר החזוי: {{ prediction }} ש"ח</h3>
+      {% endif %}
+
+      {% if error %}
+        <p class="error">שגיאה: {{ error }}</p>
+      {% endif %}
+    </div>
+
+  </body>
+</html>
